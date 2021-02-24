@@ -3,9 +3,13 @@
   <button v-on:click="handleClick">
     ToDoを追加
   </button>
+  <input v-model="filterValue"
+  placeholder="フィルタテキスト">
   <ul>
-    <li v-for="todo in todoItems" 
+    <li v-for="todo in filteredTodoItems" 
     v-bind:key="todo.id"
+    class="todo-item"
+    v-bind:class="{'done': todo.done}"
     v-on:click="todo.done = !todo.done">
     <span v-if="todo.done">✓</span>
       {{ todo.text }}
@@ -22,15 +26,27 @@ export default {
         done: false,
         text: 'Go out to sea'},
         {id: 2, 
-        done: true,
+        done: false,
         text: 'Invite the first member'}
-      ]
+      ],
+      filterValue: '',
+    }
+  },
+  computed: {
+    filteredTodoItems() {
+      if (!this.filterValue) {
+        return this.todoItems
+      }
+      return this.todoItems.filter((todo) => {
+        return todo.text.includes(this.filterValue)
+      })
     }
   },
   methods: {
     handleClick(){
       this.todoItems.push({
         id: this.todoItems.length + 1,
+        done: false,
         text: this.inputValue
       })
       // 入力をクリアする
@@ -39,3 +55,9 @@ export default {
   }
 }
 </script>
+<style>
+.todo-item.done {
+  background-color: #3fb983;
+  color: #ffffff;
+}
+</style>
